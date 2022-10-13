@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jpste\\source\\repos\\SudukoSolver\\SudukoSolver\\SudukoSolver.csproj": {}
+    "C:\\Users\\jpste\\OneDrive\\Documents\\GitHub\\SudukoSolver\\SudukoSolver\\SudukoSolver\\SudukoSolver.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jpste\\source\\repos\\SudukoSolver\\SudukoSolver\\SudukoSolver.csproj": {
+    "C:\\Users\\jpste\\OneDrive\\Documents\\GitHub\\SudukoSolver\\SudukoSolver\\SudukoSolver\\SudukoSolver.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jpste\\source\\repos\\SudukoSolver\\SudukoSolver\\SudukoSolver.csproj",
+        "projectUniqueName": "C:\\Users\\jpste\\OneDrive\\Documents\\GitHub\\SudukoSolver\\SudukoSolver\\SudukoSolver\\SudukoSolver.csproj",
         "projectName": "SudukoSolver",
-        "projectPath": "C:\\Users\\jpste\\source\\repos\\SudukoSolver\\SudukoSolver\\SudukoSolver.csproj",
+        "projectPath": "C:\\Users\\jpste\\OneDrive\\Documents\\GitHub\\SudukoSolver\\SudukoSolver\\SudukoSolver\\SudukoSolver.csproj",
         "packagesPath": "C:\\Users\\jpste\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jpste\\source\\repos\\SudukoSolver\\SudukoSolver\\obj\\",
+        "outputPath": "C:\\Users\\jpste\\OneDrive\\Documents\\GitHub\\SudukoSolver\\SudukoSolver\\SudukoSolver\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

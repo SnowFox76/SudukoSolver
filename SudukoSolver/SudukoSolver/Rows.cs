@@ -8,10 +8,10 @@ namespace SudukoSolver
 {
     class Rows
     {
-        private List<int> row;
-        private int rowNumber;
-        private bool solved;
-        private List<int> tried;
+        public List<int> row;
+        public int rowNumber;
+        public bool solved;
+        public List<int> tried;
 
         public Rows(List<int> row, int rowNumber, bool solved, List<int> tried)
         {

@@ -8,10 +8,10 @@ namespace SudukoSolver
 {
     class Columns
     {
-        private List<int> column;
-        private int columnNumber;
-        private bool solved;
-        private List<int> tried;
+        public List<int> column;
+        public int columnNumber;
+        public bool solved;
+        public List<int> tried;
 
         public Columns (List<int> column, int columnNumber, bool solved, List<int> tried)
         {

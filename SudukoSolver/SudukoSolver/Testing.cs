@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,20 @@ namespace SudukoSolver
             foreach (var item in array)
             {
                 Console.Write(item + " ");
+            }
+            //Console.WriteLine("\n");
+        }
+
+
+        //Suduko Printer
+        static void MySudukoPrinter(List<List<int>> myPuzzleLists )
+        {
+            int loopCount = 0;
+            foreach (var myList in myPuzzleLists)
+            {
+                Console.Write($"\n{loopCount}  :  ");
+                MyPrinter(myList);
+                loopCount++;
             }
         }
 
@@ -67,42 +82,74 @@ namespace SudukoSolver
 
 
         //Create the square
-        static List<int> GetSquare()
+        static List<int> GetSquare(List<List<int>> sudukoPuzzle, int position)
         {
+            var temp_square = new List<int>();
 
-            return new List<int>();
+            foreach (List<int> row in sudukoPuzzle)
+            {
+                if (position % 3 == 0)
+                {
+                    if (sudukoPuzzle.IndexOf(row) == 0 || sudukoPuzzle.IndexOf(row) == 1 || sudukoPuzzle.IndexOf(row) == 2)
+                    {
+                        //temp_square.Add(row[:3]);
+                        for (int i = 0; i < 3; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                else if (position % 3 == 1)
+                {
+                    if (sudukoPuzzle.IndexOf(row) == 3 || sudukoPuzzle.IndexOf(row) == 4 || sudukoPuzzle.IndexOf(row) == 5)
+                    {
+                        //temp_square.Add(row[3:6]);
+                        for (int i = 3; i < 6; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (sudukoPuzzle.IndexOf(row) == 6 || sudukoPuzzle.IndexOf(row) == 7 || sudukoPuzzle.IndexOf(row) == 8)
+                    {
+                        //temp_square.Add(row[6:9]);
+                        for (int i = 6; i < 9; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            
+            return temp_square;
         }
 
 
         //Create the rows, and columns
-        static List<int> CreateBoard(List<List<int>> sudukoPuzzle)
+        static (object row, object col, object sqr) ConvertInput(List<List<int>> sudukoPuzzle, int indexPosition)
         {
-            var tried = new List<int>();
+            //Declare row, column and sqare objects
+            Rows Row = new Rows(sudukoPuzzle[indexPosition], indexPosition, false, new List<int>());
 
-            //Declare row objects
-            Rows Row0 = new Rows(sudukoPuzzle[0], 0, false, tried);
-            Rows Row1 = new Rows(sudukoPuzzle[1], 1, false, tried);
-            Rows Row2 = new Rows(sudukoPuzzle[2], 2, false, tried);
-            Rows Row3 = new Rows(sudukoPuzzle[3], 3, false, tried);
-            Rows Row4 = new Rows(sudukoPuzzle[4], 4, false, tried);
-            Rows Row5 = new Rows(sudukoPuzzle[5], 5, false, tried);
-            Rows Row6 = new Rows(sudukoPuzzle[6], 6, false, tried);
-            Rows Row7 = new Rows(sudukoPuzzle[7], 7, false, tried);
-            Rows Row8 = new Rows(sudukoPuzzle[8], 8, false, tried);
+            Columns Col = new Columns(GetColumn(sudukoPuzzle, indexPosition), indexPosition, false, new List<int>());
 
-            Columns Col0 = new Columns(GetColumn(sudukoPuzzle, 0), 0, false, tried);
-            Columns Col1 = new Columns(GetColumn(sudukoPuzzle, 1), 1, false, tried);
-            Columns Col2 = new Columns(GetColumn(sudukoPuzzle, 2), 2, false, tried);
-            Columns Col3 = new Columns(GetColumn(sudukoPuzzle, 3), 3, false, tried);
-            Columns Col4 = new Columns(GetColumn(sudukoPuzzle, 4), 4, false, tried);
-            Columns Col5 = new Columns(GetColumn(sudukoPuzzle, 5), 5, false, tried);
-            Columns Col6 = new Columns(GetColumn(sudukoPuzzle, 6), 6, false, tried);
-            Columns Col7 = new Columns(GetColumn(sudukoPuzzle, 7), 7, false, tried);
-            Columns Col8 = new Columns(GetColumn(sudukoPuzzle, 8), 8, false, tried);
+            Square Sqr = new Square(GetSquare(sudukoPuzzle, indexPosition), indexPosition, false, new List<int>());
 
-
-
-            return sudukoPuzzle[0];
+            return (Row, Col, Sqr);
         }
 
 
@@ -123,14 +170,63 @@ namespace SudukoSolver
             var row8 = new List<int> { 0, 0, 0,   0, 0, 3,   5, 0, 0 };
 
             //Set up the entire puzzle in nested list
-            var myPuzzle = new List<List<int>> { row0, row1, row2, row3, row4, row5, row6, row7, row8 }; 
+            var mySudukoPuzzle = new List<List<int>> { row0, row1, row2, row3, row4, row5, row6, row7, row8 };
 
-            Console.Write("The row before solving: ");
+            //Create the puzzle board
+            var (Row0, Col0, Sqr0) = ConvertInput(mySudukoPuzzle, 0);
+            var (Row1, Col1, Sqr1) = ConvertInput(mySudukoPuzzle, 1);
+            var (Row2, Col2, Sqr2) = ConvertInput(mySudukoPuzzle, 2);
+            var (Row3, Col3, Sqr3) = ConvertInput(mySudukoPuzzle, 3);
+            var (Row4, Col4, Sqr4) = ConvertInput(mySudukoPuzzle, 4);
+            var (Row5, Col5, Sqr5) = ConvertInput(mySudukoPuzzle, 5);
+            var (Row6, Col6, Sqr6) = ConvertInput(mySudukoPuzzle, 6);
+            var (Row7, Col7, Sqr7) = ConvertInput(mySudukoPuzzle, 7);
+            var (Row8, Col8, Sqr8) = ConvertInput(mySudukoPuzzle, 8);
+
+            var mySudukoRows = new List<List<int>> {    (Row0 as dynamic).row, 
+                                                        (Row1 as dynamic).row, 
+                                                        (Row2 as dynamic).row,
+                                                        (Row3 as dynamic).row,
+                                                        (Row4 as dynamic).row,
+                                                        (Row5 as dynamic).row,
+                                                        (Row6 as dynamic).row,
+                                                        (Row7 as dynamic).row,
+                                                        (Row8 as dynamic).row
+                                                    };
+            var mySudukoCols = new List<List<int>> {    (Col0 as dynamic).column,
+                                                        (Col1 as dynamic).column,
+                                                        (Col2 as dynamic).column,
+                                                        (Col3 as dynamic).column,
+                                                        (Col4 as dynamic).column,
+                                                        (Col5 as dynamic).column,
+                                                        (Col6 as dynamic).column,
+                                                        (Col7 as dynamic).column,
+                                                        (Col8 as dynamic).column
+                                                    };
+            var mySudukoSqrs = new List<List<int>> {    (Sqr0 as dynamic).square,
+                                                        (Sqr1 as dynamic).square,
+                                                        (Sqr2 as dynamic).square,
+                                                        (Sqr3 as dynamic).square,
+                                                        (Sqr4 as dynamic).square,
+                                                        (Sqr5 as dynamic).square,
+                                                        (Sqr6 as dynamic).square,
+                                                        (Sqr7 as dynamic).square,
+                                                        (Sqr8 as dynamic).square
+                                                    };
+
+            Console.WriteLine("\n\n\nRows: ");
+            MySudukoPrinter(mySudukoRows);
+            Console.WriteLine("\n\n\nColumns: ");
+            MySudukoPrinter(mySudukoCols);
+            Console.WriteLine("\n\n\nSquares: ");
+            MySudukoPrinter(mySudukoSqrs);
+
+            /*Console.Write("The row before solving: ");
             MyPrinter(row1);
             
             RowSolver(row1);
             Console.Write("\nThe row after solving: ");
-            MyPrinter(row1);
+            MyPrinter(row1);*/
 
         }
     }

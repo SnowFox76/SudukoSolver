@@ -8,10 +8,10 @@ namespace SudukoSolver
 {
     class Square
     {
-        private List<int> square;
-        private int position;
-        private bool solved = false;
-        private List<int> tried;
+        public List<int> square;
+        public int position;
+        public bool solved = false;
+        public List<int> tried;
 
         public Square(List<int> square, int position, bool solved, List<int> tried)
         {
