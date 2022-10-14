@@ -8,17 +8,28 @@ namespace SudukoSolver
 {
     class Square
     {
-        public List<int> square;
-        public int position;
-        public bool solved = false;
-        public List<int> tried;
+        private List<int> _square;
+        public List<int> square => _square;
 
-        public Square(List<int> square, int position, bool solved, List<int> tried)
+        private int _postion;
+        public int position => _postion;
+
+        private bool _solved;
+        public bool solved => _solved;
+
+        private List<int> _tried;
+        public List<int> tried => _tried;
+
+        private int _unsolved;
+        public int unsolved => _unsolved;
+
+        public Square(List<int> square, int postion, bool solved, List<int> tried, int unsolved)
         {
-            this.square = square;
-            this.position = position;
-            this.solved = solved;
-            this.tried = tried;
+            _square = square;
+            _postion = postion;
+            _solved = solved;
+            _tried = tried;
+            _unsolved = unsolved;
         }
     }
 }

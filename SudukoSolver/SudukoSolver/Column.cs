@@ -6,19 +6,21 @@ using System.Threading.Tasks;
 
 namespace SudukoSolver
 {
-    class Columns
+    class Column
     {
         public List<int> column;
         public int columnNumber;
         public bool solved;
         public List<int> tried;
+        public int unsolved;
 
-        public Columns (List<int> column, int columnNumber, bool solved, List<int> tried)
+        public Column (List<int> column, int columnNumber, bool solved, List<int> tried, int unsolved)
         {
             this.column = column;
             this.columnNumber = columnNumber;
             this.solved = solved;
             this.tried = tried;
+            this.unsolved = unsolved;
         }
     }
 }
