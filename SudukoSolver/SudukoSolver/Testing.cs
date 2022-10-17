@@ -23,8 +23,8 @@ namespace SudukoSolver
 
 
 
-        //Displays the entire Sudoku board
-        static void MySudokuPrinter(List<List<int>> myPuzzleLists )
+        //Displays out Nested Lists
+        static void MyNestedPrinter(List<List<int>> myPuzzleLists )
         {
             int loopCount = 0;
             foreach (var myList in myPuzzleLists)
@@ -93,11 +93,73 @@ namespace SudukoSolver
 
         
 
-        //Choose the square with the least unsolved numbers
-        static int ChooseSquare()
+        //Get the object with the most unsolved (Overloaded)
+        static Column GetMostUnsolved(List<Column> myObjectList)
         {
-            int test = 1;
-            return test;
+            Column mostUnsolved = myObjectList[0];
+
+            foreach (Column col in myObjectList)
+            {
+                if (col.unsolved < mostUnsolved.unsolved)
+                {
+                    mostUnsolved = col;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            return mostUnsolved;
+        }
+        static Row GetMostUnsolved(List<Row> myObjectList)
+        {
+            Row mostUnsolved = myObjectList[0];
+
+            foreach (Row row in myObjectList)
+            {
+                if (row.unsolved < mostUnsolved.unsolved)
+                {
+                    mostUnsolved = row;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            return mostUnsolved;
+        }
+        static Square GetMostUnsolved(List<Square> myObjectList)
+        {
+            Square mostUnsolved = myObjectList[0];
+
+            foreach (Square sqr in myObjectList)
+            {
+                if (sqr.unsolved < mostUnsolved.unsolved)
+                {
+                    mostUnsolved = sqr;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            return mostUnsolved;
+        }
+
+
+
+        //Choose the square with the least unsolved numbers
+        static int ChooseSquare(Dictionary<Square, List<Row>> rowReference, Dictionary<Square, List<Column>> colReference, List<Square> sudokuSqrs)
+        {
+            Square mostUnsolvedSquare = GetMostUnsolved(sudokuSqrs);
+
+
+
+            int myInt = 0;
+            return myInt;
         }
 
 
@@ -199,7 +261,7 @@ namespace SudukoSolver
 
 
 
-        //Create the reference for the rows and columns
+        //Create the reference dictionaries for the rows and columns
         static Dictionary<Square, List<Row>>  GetRowReference(List<Row> rows, List<Square> squares)
         {
             Dictionary<Square, List<Row>> rowReference = new Dictionary<Square, List<Row>>();
@@ -275,28 +337,66 @@ namespace SudukoSolver
 
 
 
-        //Update/Propegate the cahnge to the entire board when a new candidate is inserted
+        //Update and or Propegate the change to the entire board when a new candidate is inserted
         static (Row row, Column column, Square square) UpdateBoard(Row row, Column column, Square square, int candidateSquareIndex, int candidate)
         {
-            square.square[candidateSquareIndex] = candidate;
+            
 
             return (row, column, square);
         }
 
+
+
         //Get user input / Sudoku puzzle
         static List<List<int>> GetPuzzle()
         {
-            List<List<int>> puzzle = new List<List<int>>(); 
-            for (int i = 0; i < 9; i++)
-            {
+            //Display the menu
+            Console.WriteLine("\n\n" +
+                              "=====================" +
+                              "    SUDOKU PUZZLE" +
+                              "=====================" +
+                              "\n\n\n" +
+                              "  Enter Sudoku Rows:\n\n" +
+                              "[ Entries should NOT be seperated    ]\n" +
+                              "[ Use 0 for unsolved; e.g. 002070010 ]\n");
 
+            List<List<int>> puzzle = new List<List<int>>();
+
+            //Use a nested loop to get 9 lists from the user
+            for (int i = 1; i < 10; i++)
+            {
+                List<int> stringInput = new List<int>();
+                Console.WriteLine($"Input the values for Row {i}:");
+
+                string userInput = Console.ReadLine();
+                userInput = userInput.Trim();
+
+                for (int n = 0; n < userInput.Length; n++)
+                {
+                    //Cast the user string input to an int and append to the string list
+                    try
+                    {
+                        string intString = userInput.Split(" ")[n];
+                        stringInput.Add(Convert.ToInt32(intString));
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        continue;
+                    }
+                }
+
+                puzzle.Add(stringInput);
             }
+
+            return puzzle;
         }
+
+
 
         //__main__
         static void Main(string[] args)
         {
-            //Suduko Puzzle Input
+            //Temp Suduko Puzzle Input
             var row0 = new List<int> { 0, 0, 2,   0, 7, 0,   0, 1, 0 };
             var row1 = new List<int> { 8, 0, 0,   0, 2, 0,   7, 0, 6 };
             var row2 = new List<int> { 7, 0, 4,   0, 0, 1,   0, 9, 0 };
@@ -309,9 +409,10 @@ namespace SudukoSolver
             var row7 = new List<int> { 0, 0, 0,   0, 0, 2,   0, 0, 7 };
             var row8 = new List<int> { 0, 0, 0,   0, 0, 3,   5, 0, 0 };
 
-
-            //Set up the entire puzzle in nested list
             var mySudokuPuzzle = new List<List<int>> { row0, row1, row2, row3, row4, row5, row6, row7, row8 };
+
+            //Get the user input values of the sudoku
+            var mySudokuPuzzle2 = GetPuzzle();
 
 
             //Create the puzzle board
@@ -331,7 +432,6 @@ namespace SudukoSolver
 
             Dictionary<Square, List<Row>> rowReference = GetRowReference(sudokuRows, sudokuSqrs);
             Dictionary<Square, List<Column>> colReference = GetColumnReference(sudokuCols, sudokuSqrs);
-            //
 
 
             //////////////
@@ -346,14 +446,15 @@ namespace SudukoSolver
                                                             Sqr6.square, Sqr7.square, Sqr8.square,  };
 
             Console.WriteLine("\n\n\nRows: ");
-            MySudokuPrinter(mySudokuRowsList);
+            MyNestedPrinter(mySudokuRowsList);
 
             Console.WriteLine("\n\n\nColumns: ");
-            MySudokuPrinter(mySudokuColsList);
+            MyNestedPrinter(mySudokuColsList);
 
             Console.WriteLine("\n\n\nSquares: ");
-            MySudokuPrinter(mySudokuSqrsList);
+            MyNestedPrinter(mySudokuSqrsList);
             //////////////
+            
         }
     }
 }
