@@ -38,18 +38,18 @@ namespace SudukoSolver
 
 
         //Find the slot where the candidate can be inserted, and inserts the candidate
-        static List<int> InsertCadidate(List<int> array, int candidate)
+        static (List<int> array, int openSlot) InsertCadidate(List<int> array, int candidate)
         {
-            int open_slot = array.IndexOf(0);
-            array[open_slot] = candidate;
+            int openSlot = array.IndexOf(0);
+            array[openSlot] = candidate;
 
-            return array;
+            return (array, openSlot);
         }
 
 
 
         //Completes one list
-        static List<int> RowSolver(List<int> array)
+        /*static List<int> RowSolver(List<int> array)
         {
             var temp_array = new List<int> { };
             Random rnd = new Random();
@@ -68,6 +68,37 @@ namespace SudukoSolver
                 }
             }
             return array;
+        }*/
+
+
+
+        //Inserts one candidate into a square
+        static (Square square, int candidate, int candidateIndex) CandidateToSquare(Square Square)
+        {
+            Random random = new Random();
+           
+            List<int> tempSquareList = new List<int>();
+            int candidateIndex = 0;
+            int candidateValue = 0;
+            bool newCandidate = false;
+
+            while (newCandidate = false)
+            {
+                int candidate = random.Next(1, 10);
+                if (Square.square.Contains(0) == true)
+                {
+                    continue;
+                }
+                else
+                {
+                    (tempSquareList, candidateIndex) = InsertCadidate(Square.square, candidate);
+                    Square.square = tempSquareList;
+                    candidateValue = candidate;
+                    newCandidate = true;
+                }
+            }
+
+            return (Square, candidateValue, candidateIndex);
         }
 
 
@@ -151,20 +182,27 @@ namespace SudukoSolver
 
 
 
-        //Choose the square with the least unsolved numbers
-        static int ChooseSquare(Dictionary<Square, List<Row>> rowReference, Dictionary<Square, List<Column>> colReference, List<Square> sudokuSqrs)
+        //Choose the square with the least unsolved numbers, and solve one element of the square
+        static (Square updatedSquare ,int CandidateIndex, int CandidateValue, int updatedSquareIndex) SolveSquareElement(List<Square> sudokuSqrs)
         {
+            //Get the square with the most unsloved squares
             Square mostUnsolvedSquare = GetMostUnsolved(sudokuSqrs);
 
+            int updatedSquareIndex = sudokuSqrs.IndexOf(mostUnsolvedSquare);
+            
+            //Use that square to update one element in the square
+            var (updatedSquare, candidateValue, candidateIndex) = CandidateToSquare(mostUnsolvedSquare);
+            
+            //Update the tried list for square
+            updatedSquare.tried.Add(candidateValue);
 
-
-            int myInt = 0;
-            return myInt;
+            //Return the updated square along with the values and index of the updated element
+            return (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex); 
         }
 
 
 
-        //Create the column
+        //Create the column and Squares
         static List<int> GetColumn(List<List<int>> sudokuPuzzle, int columnNumber)
         {
             var temp_column = new List<int>();
@@ -175,10 +213,6 @@ namespace SudukoSolver
             
             return temp_column;
         }
-
-
-
-        //Create the square
         static List<int> GetSquare(List<List<int>> sudokuPuzzle, int position)
         {
             var temp_square = new List<int>();
@@ -338,11 +372,105 @@ namespace SudukoSolver
 
 
         //Update and or Propegate the change to the entire board when a new candidate is inserted
-        static (Row row, Column column, Square square) UpdateBoard(Row row, Column column, Square square, int candidateSquareIndex, int candidate)
+        static void UpdateBoard(List<Row> rows, List<Column> columns, int candidateIndex, int candidateValue, int squareIndex)
         {
-            
+            int candidateColLogic = candidateIndex / 3;
+            int candidateRowLogic = candidateIndex % 3;
 
-            return (row, column, square);
+            //Use the logic described above to index and update the relevant column value
+            if (candidateIndex % 3 == 0)
+            {
+                if (squareIndex < 3)
+                {
+                    columns[0].column[candidateColLogic] = candidateValue;
+                }
+                else if (squareIndex > 2 && squareIndex < 6)
+                {
+                    columns[0].column[candidateColLogic+3] = candidateValue;
+                }
+                else
+                {
+                    columns[0].column[candidateColLogic+6] = candidateValue;
+                }
+            }
+            else if (candidateIndex % 3 == 1)
+            {
+                if (squareIndex < 3)
+                {
+                    columns[1].column[candidateColLogic] = candidateValue;
+                }
+                else if (squareIndex > 2 && squareIndex < 6)
+                {
+                    columns[1].column[candidateColLogic + 3] = candidateValue;
+                }
+                else
+                {
+                    columns[1].column[candidateColLogic + 6] = candidateValue;
+                }
+            }
+            else
+            {
+                if (squareIndex < 3)
+                {
+                    columns[2].column[candidateColLogic] = candidateValue;
+                }
+                else if (squareIndex > 2 && squareIndex < 6)
+                {
+                    columns[2].column[candidateColLogic + 3] = candidateValue;
+                }
+                else
+                {
+                    columns[2].column[candidateColLogic + 6] = candidateValue;
+                }
+            }
+
+            //Use the logic described above to index and update the relevant row value
+            if (candidateIndex < 3)
+            {
+                if (squareIndex % 3 == 0)
+                {
+                    rows[0].row[candidateRowLogic] = candidateValue;
+                }
+                else if (squareIndex % 3 == 1)
+                {
+                    rows[0].row[candidateRowLogic+3] = candidateValue;
+                }
+                else
+                {
+                    rows[0].row[candidateRowLogic+6] = candidateValue;
+                }
+            }
+            else if (candidateIndex > 2 && candidateIndex < 6)
+            {
+
+                if (squareIndex % 3 == 0)
+                {
+                    rows[1].row[candidateRowLogic] = candidateValue;
+                }
+                else if (squareIndex % 3 == 1)
+                {
+                    rows[1].row[candidateRowLogic + 3] = candidateValue;
+                }
+                else
+                {
+                    rows[1].row[candidateRowLogic + 6] = candidateValue;
+                }
+            }
+            else
+            {
+                if (squareIndex % 3 == 0)
+                {
+                    rows[2].row[candidateRowLogic] = candidateValue;
+                }
+                else if (squareIndex % 3 == 1)
+                {
+                    rows[2].row[candidateRowLogic + 3] = candidateValue;
+                }
+                else
+                {
+                    rows[2].row[candidateRowLogic + 6] = candidateValue;
+                }
+            }
         }
 
 
@@ -412,7 +540,7 @@ namespace SudukoSolver
             var mySudokuPuzzle = new List<List<int>> { row0, row1, row2, row3, row4, row5, row6, row7, row8 };
 
             //Get the user input values of the sudoku
-            var mySudokuPuzzle2 = GetPuzzle();
+            //var mySudokuPuzzle2 = GetPuzzle();
 
 
             //Create the puzzle board
@@ -430,29 +558,57 @@ namespace SudukoSolver
             List<Column> sudokuCols = new List<Column> { Col0, Col1, Col2, Col3, Col4, Col5, Col6, Col7, Col8 };
             List<Square> sudokuSqrs = new List<Square> { Sqr0, Sqr1, Sqr2, Sqr3, Sqr4, Sqr5, Sqr6 ,Sqr7, Sqr8 };
 
-            Dictionary<Square, List<Row>> rowReference = GetRowReference(sudokuRows, sudokuSqrs);
-            Dictionary<Square, List<Column>> colReference = GetColumnReference(sudokuCols, sudokuSqrs);
 
 
             //////////////
-            var mySudokuRowsList = new List<List<int>> {    Row0.row, Row1.row, Row2.row, 
-                                                            Row3.row, Row4.row, Row5.row, 
+            var mySudokuRowsList = new List<List<int>> {    Row0.row, Row1.row, Row2.row,
+                                                            Row3.row, Row4.row, Row5.row,
                                                             Row6.row, Row7.row, Row8.row    };
-            var mySudokuColsList = new List<List<int>> {    Col0.column, Col1.column, Col2.column, 
-                                                            Col3.column, Col4.column, Col5.column, 
+            var mySudokuColsList = new List<List<int>> {    Col0.column, Col1.column, Col2.column,
+                                                            Col3.column, Col4.column, Col5.column,
                                                             Col6.column, Col7.column, Col8.column   };
             var mySudokuSqrsList = new List<List<int>> {    Sqr0.square, Sqr1.square, Sqr2.square,
                                                             Sqr3.square, Sqr4.square, Sqr5.square,
                                                             Sqr6.square, Sqr7.square, Sqr8.square,  };
 
-            Console.WriteLine("\n\n\nRows: ");
+            Console.WriteLine("\n\n\nRows Before: ");
             MyNestedPrinter(mySudokuRowsList);
 
-            Console.WriteLine("\n\n\nColumns: ");
+            Console.WriteLine("\n\n\nColumns Before: ");
             MyNestedPrinter(mySudokuColsList);
 
-            Console.WriteLine("\n\n\nSquares: ");
+            Console.WriteLine("\n\n\nSquares Before: ");
             MyNestedPrinter(mySudokuSqrsList);
+            //////////////
+
+
+
+            Dictionary<Square, List<Row>> rowReference = GetRowReference(sudokuRows, sudokuSqrs);
+            Dictionary<Square, List<Column>> colReference = GetColumnReference(sudokuCols, sudokuSqrs);
+
+            var (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs);
+            UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
+
+
+            //////////////
+            var myNewSudokuRowsList = new List<List<int>> {    Row0.row, Row1.row, Row2.row, 
+                                                            Row3.row, Row4.row, Row5.row, 
+                                                            Row6.row, Row7.row, Row8.row    };
+            var myNewSudokuColsList = new List<List<int>> {    Col0.column, Col1.column, Col2.column, 
+                                                            Col3.column, Col4.column, Col5.column, 
+                                                            Col6.column, Col7.column, Col8.column   };
+            var myNewSudokuSqrsList = new List<List<int>> {    Sqr0.square, Sqr1.square, Sqr2.square,
+                                                            Sqr3.square, Sqr4.square, Sqr5.square,
+                                                            Sqr6.square, Sqr7.square, Sqr8.square,  };
+
+            Console.WriteLine("\n\n\nRows After: ");
+            MyNestedPrinter(myNewSudokuRowsList);
+
+            Console.WriteLine("\n\n\nColumns After: ");
+            MyNestedPrinter(myNewSudokuColsList);
+
+            Console.WriteLine("\n\n\nSquares After: ");
+            MyNestedPrinter(myNewSudokuSqrsList);
             //////////////
             
         }

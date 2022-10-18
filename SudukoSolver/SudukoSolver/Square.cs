@@ -9,7 +9,7 @@ namespace SudukoSolver
     class Square
     {
         private List<int> _square;
-        public List<int> square => _square;
+        public List<int> square { get { return _square; } set { _square = value; } }
 
         private int _postion;
         public int position => _postion;
