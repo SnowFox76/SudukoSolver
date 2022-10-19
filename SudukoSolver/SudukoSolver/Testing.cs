@@ -73,31 +73,29 @@ namespace SudukoSolver
 
 
         //Inserts one candidate into a square
-        static (Square square, int candidate, int candidateIndex) CandidateToSquare(Square Square)
+        static (Square square, int candidateValue, int candidateIndex) CandidateToSquare(Square Square)
         {
             Random random = new Random();
-           
-            List<int> tempSquareList = new List<int>();
-            int candidateIndex = 0;
-            int candidateValue = 0;
             bool newCandidate = false;
-
-            while (newCandidate = false)
+            int candidateValue = 0;
+            int candidateIndex = 0;
+            
+            while (newCandidate == false)
             {
                 int candidate = random.Next(1, 10);
-                if (Square.square.Contains(0) == true)
+                //candidateValue = 6;
+                if (Square.square.Contains(candidateValue) == true)
                 {
                     continue;
                 }
                 else
                 {
-                    (tempSquareList, candidateIndex) = InsertCadidate(Square.square, candidate);
+                    (List<int> tempSquareList, candidateIndex) = InsertCadidate(Square.square, candidateValue);
                     Square.square = tempSquareList;
-                    candidateValue = candidate;
                     newCandidate = true;
+                    //return (Square, candidateValue, candidateIndex);
                 }
             }
-
             return (Square, candidateValue, candidateIndex);
         }
 
@@ -125,15 +123,15 @@ namespace SudukoSolver
         
 
         //Get the object with the most unsolved (Overloaded)
-        static Column GetMostUnsolved(List<Column> myObjectList)
+        static Column GetMostSolved(List<Column> myObjectList)
         {
-            Column mostUnsolved = myObjectList[0];
+            Column mostSolved = myObjectList[0];
 
             foreach (Column col in myObjectList)
             {
-                if (col.unsolved < mostUnsolved.unsolved)
+                if (col.unsolved < mostSolved.unsolved)
                 {
-                    mostUnsolved = col;
+                    mostSolved = col;
                 }
                 else
                 {
@@ -141,17 +139,17 @@ namespace SudukoSolver
                 }
             }
 
-            return mostUnsolved;
+            return mostSolved;
         }
-        static Row GetMostUnsolved(List<Row> myObjectList)
+        static Row GetMostSolved(List<Row> myObjectList)
         {
-            Row mostUnsolved = myObjectList[0];
+            Row mostSolved = myObjectList[0];
 
             foreach (Row row in myObjectList)
             {
-                if (row.unsolved < mostUnsolved.unsolved)
+                if (row.unsolved < mostSolved.unsolved)
                 {
-                    mostUnsolved = row;
+                    mostSolved = row;
                 }
                 else
                 {
@@ -159,17 +157,17 @@ namespace SudukoSolver
                 }
             }
 
-            return mostUnsolved;
+            return mostSolved;
         }
-        static Square GetMostUnsolved(List<Square> myObjectList)
+        static Square GetMostSolved(List<Square> myObjectList)
         {
-            Square mostUnsolved = myObjectList[0];
+            Square mostSolved = myObjectList[0];
 
             foreach (Square sqr in myObjectList)
             {
-                if (sqr.unsolved < mostUnsolved.unsolved)
+                if (sqr.unsolved < mostSolved.unsolved)
                 {
-                    mostUnsolved = sqr;
+                    mostSolved = sqr;
                 }
                 else
                 {
@@ -177,7 +175,7 @@ namespace SudukoSolver
                 }
             }
 
-            return mostUnsolved;
+            return mostSolved;
         }
 
 
@@ -186,15 +184,17 @@ namespace SudukoSolver
         static (Square updatedSquare ,int CandidateIndex, int CandidateValue, int updatedSquareIndex) SolveSquareElement(List<Square> sudokuSqrs)
         {
             //Get the square with the most unsloved squares
-            Square mostUnsolvedSquare = GetMostUnsolved(sudokuSqrs);
+            Square mostSolvedSquare = GetMostSolved(sudokuSqrs);
 
-            int updatedSquareIndex = sudokuSqrs.IndexOf(mostUnsolvedSquare);
+            int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);
             
             //Use that square to update one element in the square
-            var (updatedSquare, candidateValue, candidateIndex) = CandidateToSquare(mostUnsolvedSquare);
+            var (updatedSquare, candidateValue, candidateIndex) = CandidateToSquare(mostSolvedSquare);
             
             //Update the tried list for square
             updatedSquare.tried.Add(candidateValue);
+            updatedSquare.unsolved += 1;
+
 
             //Return the updated square along with the values and index of the updated element
             return (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex); 
@@ -219,9 +219,9 @@ namespace SudukoSolver
 
             foreach (List<int> row in sudokuPuzzle)
             {
-                if (position % 3 == 0)
+                if (sudokuPuzzle.IndexOf(row) == 0 || sudokuPuzzle.IndexOf(row) == 1 || sudokuPuzzle.IndexOf(row) == 2) 
                 {
-                    if (sudokuPuzzle.IndexOf(row) == 0 || sudokuPuzzle.IndexOf(row) == 1 || sudokuPuzzle.IndexOf(row) == 2)
+                    if (position % 3 == 0)
                     {
                         //temp_square.Add(row[:3]);
                         for (int i = 0; i < 3; i++)
@@ -229,14 +229,7 @@ namespace SudukoSolver
                             temp_square.Add(row[i]);
                         }
                     }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                else if (position % 3 == 1)
-                {
-                    if (sudokuPuzzle.IndexOf(row) == 3 || sudokuPuzzle.IndexOf(row) == 4 || sudokuPuzzle.IndexOf(row) == 5)
+                    else if (position % 3 == 1)
                     {
                         //temp_square.Add(row[3:6]);
                         for (int i = 3; i < 6; i++)
@@ -246,12 +239,32 @@ namespace SudukoSolver
                     }
                     else
                     {
-                        continue;
+                        //temp_square.Add(row[6:9]);
+                        for (int i = 6; i < 9; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
                     }
                 }
-                else
+                else if (sudokuPuzzle.IndexOf(row) == 3 || sudokuPuzzle.IndexOf(row) == 4 || sudokuPuzzle.IndexOf(row) == 5) 
                 {
-                    if (sudokuPuzzle.IndexOf(row) == 6 || sudokuPuzzle.IndexOf(row) == 7 || sudokuPuzzle.IndexOf(row) == 8)
+                    if (position % 3 == 0)
+                    {
+                        //temp_square.Add(row[:3]);
+                        for (int i = 0; i < 3; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
+                    }
+                    else if (position % 3 == 1)
+                    {
+                        //temp_square.Add(row[3:6]);
+                        for (int i = 3; i < 6; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
+                    }
+                    else
                     {
                         //temp_square.Add(row[6:9]);
                         for (int i = 6; i < 9; i++)
@@ -259,13 +272,51 @@ namespace SudukoSolver
                             temp_square.Add(row[i]);
                         }
                     }
+                }
+                else
+                {
+                    if (position % 3 == 0)
+                    {
+                        //temp_square.Add(row[:3]);
+                        for (int i = 0; i < 3; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
+                    }
+                    else if (position % 3 == 1)
+                    {
+                        //temp_square.Add(row[3:6]);
+                        for (int i = 3; i < 6; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
+                    }
                     else
                     {
-                        continue;
+                        //temp_square.Add(row[6:9]);
+                        for (int i = 6; i < 9; i++)
+                        {
+                            temp_square.Add(row[i]);
+                        }
                     }
                 }
             }
-            
+
+            //Remove the excess squares added to the list
+            if (position < 3)
+            {
+                temp_square.RemoveRange(9, 18);
+            }
+            else if (position > 2 && position < 6)
+            {
+                temp_square.RemoveRange(0, 9);
+                temp_square.RemoveRange(9, 9);
+            }
+            else
+            {
+                temp_square.RemoveRange(0, 18);
+            }
+
             return temp_square;
         }
 
@@ -348,7 +399,7 @@ namespace SudukoSolver
                         colList.Add(columns[i]);
                     }
                 }
-                else if (squarePosition > 2 && squarePosition < 6)
+                else if (squarePosition % 3 == 1)
                 {
                     for (int i = 3; i < 6; i++)
                     {
@@ -401,7 +452,7 @@ namespace SudukoSolver
                 }
                 else if (squareIndex > 2 && squareIndex < 6)
                 {
-                    columns[1].column[candidateColLogic + 3] = candidateValue;
+                    columns[1].column[candidateColLogic + 3] = candidateValue; 
                 }
                 else
                 {
@@ -416,7 +467,7 @@ namespace SudukoSolver
                 }
                 else if (squareIndex > 2 && squareIndex < 6)
                 {
-                    columns[2].column[candidateColLogic + 3] = candidateValue;
+                    columns[2].column[candidateColLogic + 3] = candidateValue; 
                 }
                 else
                 {
@@ -470,6 +521,31 @@ namespace SudukoSolver
                 {
                     rows[2].row[candidateRowLogic + 6] = candidateValue;
                 }
+            }
+        }
+
+
+
+        //Solve every missing value
+        static void SolveMe(List<Row> sudokuRows, List<Column> sudokuCols, List<Square> sudokuSqrs)
+        {
+            Dictionary<Square, List<Row>> rowReference = GetRowReference(sudokuRows, sudokuSqrs);
+            Dictionary<Square, List<Column>> colReference = GetColumnReference(sudokuCols, sudokuSqrs);
+
+            Square updatedSquare;
+            int candidateIndex;
+            int candidateValue;
+            int updatedSquareIndex;
+
+            //var (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs);
+            //UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
+
+            for (int i = 0; i < 54; i++)
+            {
+                (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs);
+                UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
+
+                Console.WriteLine($"\n\nUpdated Square Position: {updatedSquare.position}\n" + $"Candidate Value at Index: {candidateValue} @ {candidateIndex}\n");
             }
         }
 
@@ -581,21 +657,14 @@ namespace SudukoSolver
             MyNestedPrinter(mySudokuSqrsList);
             //////////////
 
-
-
-            Dictionary<Square, List<Row>> rowReference = GetRowReference(sudokuRows, sudokuSqrs);
-            Dictionary<Square, List<Column>> colReference = GetColumnReference(sudokuCols, sudokuSqrs);
-
-            var (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs);
-            UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
-
+            SolveMe(sudokuRows, sudokuCols, sudokuSqrs);
 
             //////////////
-            var myNewSudokuRowsList = new List<List<int>> {    Row0.row, Row1.row, Row2.row, 
-                                                            Row3.row, Row4.row, Row5.row, 
+            var myNewSudokuRowsList = new List<List<int>> {    Row0.row, Row1.row, Row2.row,
+                                                            Row3.row, Row4.row, Row5.row,
                                                             Row6.row, Row7.row, Row8.row    };
-            var myNewSudokuColsList = new List<List<int>> {    Col0.column, Col1.column, Col2.column, 
-                                                            Col3.column, Col4.column, Col5.column, 
+            var myNewSudokuColsList = new List<List<int>> {    Col0.column, Col1.column, Col2.column,
+                                                            Col3.column, Col4.column, Col5.column,
                                                             Col6.column, Col7.column, Col8.column   };
             var myNewSudokuSqrsList = new List<List<int>> {    Sqr0.square, Sqr1.square, Sqr2.square,
                                                             Sqr3.square, Sqr4.square, Sqr5.square,
@@ -610,7 +679,7 @@ namespace SudukoSolver
             Console.WriteLine("\n\n\nSquares After: ");
             MyNestedPrinter(myNewSudokuSqrsList);
             //////////////
-            
+
         }
     }
 }
