@@ -18,10 +18,18 @@ namespace SudukoSolver
         public bool solved => _solved;
 
         private List<int> _tried;
-        public List<int> tried { get { return _tried; } set { _tried = value; } }  
+        public List<int> tried
+        {
+            get { return _tried; }
+            set { _tried = value; }
+        }
 
         private int _unsolved;
-        public int unsolved { get; set; }
+        public int unsolved
+        {
+            get { return _unsolved; }
+            set { _unsolved = value; }
+        }
 
         public Square(List<int> square, int postion, bool solved, List<int> tried, int unsolved)
         {
