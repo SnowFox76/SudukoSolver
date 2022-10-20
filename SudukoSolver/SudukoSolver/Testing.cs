@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace SudukoSolver
 {
-    internal class Testing
+    public  class Testing
     {
         //Get user input / Sudoku puzzle
         static List<List<int>> GetPuzzle()
         {
             //Display the menu
             Console.WriteLine("\n\n" +
-                              "=====================" +
-                              "    SUDOKU PUZZLE" +
+                              "=====================\n" +
+                              "    SUDOKU PUZZLE\n" +
                               "=====================" +
                               "\n\n\n" +
                               "  Enter Sudoku Rows:\n\n" +
@@ -57,273 +57,17 @@ namespace SudukoSolver
 
 
 
-        //Displays out a list
-        static void MyPrinter(List<int> array)
-        {
-            foreach (var item in array)
-            {
-                Console.Write(item + " ");
-            }
-            //Console.WriteLine("\n");
-        }
-
-
-
-        //Displays out Nested Lists
-        static void MyNestedPrinter(List<List<int>> myPuzzleLists )
-        {
-            int loopCount = 0;
-            foreach (var myList in myPuzzleLists)
-            {
-                Console.Write($"\n{loopCount}  :  ");
-                MyPrinter(myList);
-                loopCount++;
-            }
-        }
-
-
-
-        //Get the number of unsolved numbers in a list
-        static int GetNumberOfUnsolved(List<int> array)
-        {
-            int unsolved = 0;
-            foreach (var item in array)
-            {
-                if (item == 0)
-                {
-                    unsolved++;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            return unsolved;
-        }
-
-
-
-        //Get total number of unsolved in puzzle
-        static int GetTotalUnsolved(List<Square> Squares)
-        {
-            int total = 0;
-
-            foreach (Square square in Squares)
-            {
-                total += square.unsolved;
-            }
-
-            return total;
-        }
-
-
-
-        //Get the object with the most unsolved (Overloaded)
-        static Column GetMostSolved(List<Column> myObjectList)
-        {
-            Column mostSolved = new Column(myObjectList[0].column, 0, false, myObjectList[0].tried, 9);
-
-            foreach (Column col in myObjectList)
-            {
-                if (col.unsolved == 0)
-                {
-                    continue;
-                }
-                else if (col.unsolved < mostSolved.unsolved)
-                {
-                    mostSolved = col;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            return mostSolved;
-        }
-        static Row GetMostSolved(List<Row> myObjectList)
-        {
-            Row mostSolved = new Row(myObjectList[0].row, 0, false, myObjectList[0].tried, 9);
-
-            foreach (Row row in myObjectList)
-            {
-                if (row.unsolved == 0)
-                {
-                    continue;
-                }
-                else if (row.unsolved < mostSolved.unsolved)
-                {
-                    mostSolved = row;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            return mostSolved;
-        }
-        static Square GetMostSolved(List<Square> myObjectList)
-        {
-            Square mostSolved = myObjectList[0];
-
-            foreach (Square sqr in myObjectList)
-            {
-                if (sqr.unsolved == 0)
-                {
-                    continue;
-                }
-                else if (mostSolved.unsolved == 0)
-                {
-                    mostSolved = sqr;
-                }
-                else if (sqr.unsolved < mostSolved.unsolved)
-                {
-                    mostSolved = sqr;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            return mostSolved;
-        }
-
-
-
-        //Create the column and Squares
-        static List<int> GetColumn(List<List<int>> sudokuPuzzle, int columnNumber)
-        {
-            var temp_column = new List<int>();
-            foreach (List<int> row in sudokuPuzzle)
-            {
-                temp_column.Add(row[columnNumber]);
-            }
-
-            return temp_column;
-        }
-        static List<int> GetSquare(List<List<int>> sudokuPuzzle, int position)
-        {
-            var temp_square = new List<int>();
-
-            foreach (List<int> row in sudokuPuzzle)
-            {
-                if (sudokuPuzzle.IndexOf(row) == 0 || sudokuPuzzle.IndexOf(row) == 1 || sudokuPuzzle.IndexOf(row) == 2)
-                {
-                    if (position % 3 == 0)
-                    {
-                        //temp_square.Add(row[:3]);
-                        for (int i = 0; i < 3; i++)
-                        {
-                            temp_square.Add(row[i]); 
-                        }
-                    }
-                    else if (position % 3 == 1)
-                    {
-                        //temp_square.Add(row[3:6]);
-                        for (int i = 3; i < 6; i++)
-                        {
-                            temp_square.Add(row[i]);
-                        }
-                    }
-                    else
-                    {
-                        //temp_square.Add(row[6:9]);
-                        for (int i = 6; i < 9; i++)
-                        {
-                            temp_square.Add(row[i]);
-                        }
-                    }
-                }
-                else if (sudokuPuzzle.IndexOf(row) == 3 || sudokuPuzzle.IndexOf(row) == 4 || sudokuPuzzle.IndexOf(row) == 5)
-                {
-                    if (position % 3 == 0)
-                    {
-                        //temp_square.Add(row[:3]);
-                        for (int i = 0; i < 3; i++)
-                        {
-                            temp_square.Add(row[i]);
-                        }
-                    }
-                    else if (position % 3 == 1)
-                    {
-                        //temp_square.Add(row[3:6]);
-                        for (int i = 3; i < 6; i++)
-                        {
-                            temp_square.Add(row[i]);
-                        }
-                    }
-                    else
-                    {
-                        //temp_square.Add(row[6:9]);
-                        for (int i = 6; i < 9; i++)
-                        {
-                            temp_square.Add(row[i]);
-                        }
-                    }
-                }
-                else
-                {
-                    if (position % 3 == 0)
-                    {
-                        //temp_square.Add(row[:3]);
-                        for (int i = 0; i < 3; i++)
-                        {
-                            temp_square.Add(row[i]);
-                        }
-                    }
-                    else if (position % 3 == 1)
-                    {
-                        //temp_square.Add(row[3:6]);
-                        for (int i = 3; i < 6; i++)
-                        {
-                            temp_square.Add(row[i]);
-                        }
-                    }
-                    else
-                    {
-                        //temp_square.Add(row[6:9]);
-                        for (int i = 6; i < 9; i++)
-                        {
-                            temp_square.Add(row[i]);
-                        }
-                    }
-                }
-            }
-
-            //Remove the excess squares added to the list
-            if (position < 3)
-            {
-                temp_square.RemoveRange(9, 18);
-            }
-            else if (position > 2 && position < 6)
-            {
-                temp_square.RemoveRange(0, 9);
-                temp_square.RemoveRange(9, 9);
-            }
-            else
-            {
-                temp_square.RemoveRange(0, 18);
-            }
-
-            return temp_square;
-        }
-
-
-
         //Create the rows, and columns
         static (Row row, Column col, Square sqr) ConvertInput(List<List<int>> sudokuPuzzle, int indexPosition)
         {
             //Create the column and square lists
-            List<int> newColumn = GetColumn(sudokuPuzzle, indexPosition);
-            List<int> newSquare = GetSquare(sudokuPuzzle, indexPosition);
+            List<int> newColumn = Column.GetColumn(sudokuPuzzle, indexPosition);
+            List<int> newSquare = Square.GetSquare(sudokuPuzzle, indexPosition);
 
             //Find the number of unsolved numbers in each list
-            int unsolvedInRow = GetNumberOfUnsolved(sudokuPuzzle[indexPosition]);
-            int unsolvedInColumn = GetNumberOfUnsolved(newColumn);
-            int unsolvedInSquare = GetNumberOfUnsolved(newSquare);
+            int unsolvedInRow = MyMiscMethods.GetNumberOfUnsolved(sudokuPuzzle[indexPosition]);
+            int unsolvedInColumn = MyMiscMethods.GetNumberOfUnsolved(newColumn);
+            int unsolvedInSquare = MyMiscMethods.GetNumberOfUnsolved(newSquare);
 
             //Declare row, column and sqare objects
             Row Row = new Row(sudokuPuzzle[indexPosition], indexPosition, false, new List<int>(), unsolvedInRow);
@@ -414,7 +158,7 @@ namespace SudukoSolver
 
 
         //Find the slot where the candidate can be inserted, and inserts the candidate
-        static (List<int> array, int openSlot) InsertCadidate(List<int> array, int candidate)
+        public static (List<int> array, int openSlot) InsertCadidate(List<int> array, int candidate)
         {
             int openSlot = array.IndexOf(0);
             array[openSlot] = candidate;
@@ -424,57 +168,20 @@ namespace SudukoSolver
 
 
 
-        //Calls a random integer
-        static int GetRandomNumber()
-        {
-            Random random = new Random();
-            return random.Next(1, 10);
-        }
-
-
-
-        //Inserts one candidate into a square
-        static (Square square, int candidateValue, int candidateIndex) CandidateToSquare(Square Square)
-        {
-            bool newCandidate = false;
-            int candidateValue = 0;
-            int candidateIndex = 0;
-            
-            while (newCandidate == false)
-            {
-                candidateValue = GetRandomNumber();
-
-                if (Square.square.Contains(candidateValue) == true)
-                {
-                    continue;
-                }
-                else
-                {
-                    (List<int> tempSquareList, candidateIndex) = InsertCadidate(Square.square, candidateValue);
-                    Square.square = tempSquareList;
-                    newCandidate = true;
-                    //return (Square, candidateValue, candidateIndex);
-                }
-            }
-            return (Square, candidateValue, candidateIndex);
-        }
-
-
-
         //Choose the square with the least unsolved numbers, and solve one element of the square
         static (Square updatedSquare ,int CandidateIndex, int CandidateValue, int updatedSquareIndex) SolveSquareElement(List<Square> sudokuSqrs)
         {
             //Get the square with the most unsloved squares
-            Square mostSolvedSquare = GetMostSolved(sudokuSqrs);
+            Square mostSolvedSquare = Square.GetMostSolved(sudokuSqrs);
 
             int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);
             
             //Use that square to update one element in the square
-            var (updatedSquare, candidateValue, candidateIndex) = CandidateToSquare(mostSolvedSquare);
+            var (updatedSquare, candidateValue, candidateIndex) = Square.CandidateToSquare(mostSolvedSquare);
             
             //Update the tried list for square
             updatedSquare.tried.Add(candidateValue);
-            updatedSquare.unsolved = GetNumberOfUnsolved(updatedSquare.square);
+            updatedSquare.unsolved = MyMiscMethods.GetNumberOfUnsolved(updatedSquare.square);
 
 
             //Return the updated square along with the values and index of the updated element
@@ -597,7 +304,7 @@ namespace SudukoSolver
             int candidateIndex;
             int candidateValue;
             int updatedSquareIndex;
-            int totalUnsolved = GetTotalUnsolved(sudokuSqrs);
+            int totalUnsolved = MyMiscMethods.GetTotalUnsolved(sudokuSqrs);
             Console.WriteLine($"Total Unsolved = {totalUnsolved}\n");
 
             for (int i = 0; i < totalUnsolved; i++)
@@ -653,7 +360,6 @@ namespace SudukoSolver
             //Get the user input values of the sudoku
             //var mySudokuPuzzle = GetPuzzle();
 
-
             //Create the puzzle board
             var (Row0, Col0, Sqr0) = ConvertInput(mySudokuPuzzle, 0);
             var (Row1, Col1, Sqr1) = ConvertInput(mySudokuPuzzle, 1);
@@ -669,55 +375,11 @@ namespace SudukoSolver
             List<Column> sudokuCols = new List<Column>  { Col0, Col1, Col2, Col3, Col4, Col5, Col6, Col7, Col8 };
             List<Square> sudokuSqrs = new List<Square>  { Sqr0, Sqr1, Sqr2, Sqr3, Sqr4, Sqr5, Sqr6 ,Sqr7, Sqr8 };
 
-
-
-            //////////////
-            var mySudokuRowsList = new List<List<int>> {    Row0.row, Row1.row, Row2.row,
-                                                            Row3.row, Row4.row, Row5.row,
-                                                            Row6.row, Row7.row, Row8.row    };
-            var mySudokuColsList = new List<List<int>> {    Col0.column, Col1.column, Col2.column,
-                                                            Col3.column, Col4.column, Col5.column,
-                                                            Col6.column, Col7.column, Col8.column   };
-            var mySudokuSqrsList = new List<List<int>> {    Sqr0.square, Sqr1.square, Sqr2.square,
-                                                            Sqr3.square, Sqr4.square, Sqr5.square,
-                                                            Sqr6.square, Sqr7.square, Sqr8.square,  };
-
-            Console.WriteLine("\n\n\nRows Before: ");
-            MyNestedPrinter(mySudokuRowsList);
-
-            Console.WriteLine("\n\n\nColumns Before: ");
-            MyNestedPrinter(mySudokuColsList);
-
-            Console.WriteLine("\n\n\nSquares Before: ");
-            MyNestedPrinter(mySudokuSqrsList);
-            Console.WriteLine("\n\n\n");
-            //////////////
-
+            MyMiscMethods.MySudokuPrinter(sudokuRows, sudokuCols, sudokuSqrs, "\n\nBEFORE");
 
             SolveMe(sudokuRows, sudokuCols, sudokuSqrs);
 
-
-            //////////////
-            var myNewSudokuRowsList = new List<List<int>> {    Row0.row, Row1.row, Row2.row,
-                                                            Row3.row, Row4.row, Row5.row,
-                                                            Row6.row, Row7.row, Row8.row    };
-            var myNewSudokuColsList = new List<List<int>> {    Col0.column, Col1.column, Col2.column,
-                                                            Col3.column, Col4.column, Col5.column,
-                                                            Col6.column, Col7.column, Col8.column   };
-            var myNewSudokuSqrsList = new List<List<int>> {    Sqr0.square, Sqr1.square, Sqr2.square,
-                                                            Sqr3.square, Sqr4.square, Sqr5.square,
-                                                            Sqr6.square, Sqr7.square, Sqr8.square,  };
-
-            Console.WriteLine("\n\n\nRows After: ");
-            MyNestedPrinter(myNewSudokuRowsList);
-
-            Console.WriteLine("\n\n\nColumns After: ");
-            MyNestedPrinter(myNewSudokuColsList);
-
-            Console.WriteLine("\n\n\nSquares After: ");
-            MyNestedPrinter(myNewSudokuSqrsList);
-            Console.WriteLine("\n\n\n");
-            //////////////
+            MyMiscMethods.MySudokuPrinter(sudokuRows, sudokuCols, sudokuSqrs, "\n\nAFTER");
 
         }
     }
