@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SudukoSolver
 {
-    public  class Testing
+    public class SudokuSolver
     {
         //Get user input / Sudoku puzzle
         static List<List<int>> GetPuzzle()

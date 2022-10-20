@@ -202,6 +202,57 @@ namespace SudukoSolver
 
 
         //Inserts one candidate into a square
+        public static (Square square, int candidateValue, int candidateIndex) NewCandidateToSquare(Square Square, List<Row> Rows, List<Column> Columns)
+        {
+            bool newCandidate = false;
+            int candidateValue = 0;
+            int candidateIndex = 0;
+
+            while (newCandidate == false)
+            {
+                candidateValue = GetRandomNumber();
+
+                if (Square.square.Contains(candidateValue) == true)
+                {
+                    continue;
+                }
+                else
+                {
+                    (List<int> tempSquareList, candidateIndex) = SudokuSolver.InsertCadidate(Square.square, candidateValue);
+                    Square.square = tempSquareList;
+                    newCandidate = true;
+                }
+            }
+            return (Square, candidateValue, candidateIndex);
+        }
+
+
+        //Check the candidate for for clashed in rows and or columns
+        static (int openRow, int openColumn, bool duplicate) CheckCandidate(int candidate, List<Row> Rows, List<Column> Columns)
+        {
+            bool duplicate = false;
+            dynamic? openRow = null;
+            dynamic? openColumn = null;
+
+            foreach (Row row in Rows)
+            {
+                openRow = row.row.Contains(candidate) ? null : row.rowNumber;
+            }
+            
+            foreach (Column column in Columns)
+            {
+                openColumn = column.column.Contains(candidate) ? null : column.columnNumber;
+            }
+
+            if (openRow != null && openColumn != null)
+            {
+                duplicate = true;
+            }
+            
+            return (openRow, openColumn, duplicate);
+        }
+
+
         public static (Square square, int candidateValue, int candidateIndex) CandidateToSquare(Square Square)
         {
             bool newCandidate = false;
@@ -218,7 +269,7 @@ namespace SudukoSolver
                 }
                 else
                 {
-                    (List<int> tempSquareList, candidateIndex) = Testing.InsertCadidate(Square.square, candidateValue);
+                    (List<int> tempSquareList, candidateIndex) = SudokuSolver.InsertCadidate(Square.square, candidateValue);
                     Square.square = tempSquareList;
                     newCandidate = true;
                 }
