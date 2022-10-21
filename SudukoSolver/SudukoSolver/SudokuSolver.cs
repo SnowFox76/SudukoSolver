@@ -170,15 +170,15 @@ namespace SudukoSolver
 
 
         //Choose the square with the least unsolved numbers, and solve one element of the square
-        static (Square updatedSquare ,int CandidateIndex, int CandidateValue, int updatedSquareIndex) SolveSquareElement(List<Square> sudokuSqrs)
+        static (Square updatedSquare ,int CandidateIndex, int CandidateValue, int updatedSquareIndex) SolveSquareElement(List<Square> sudokuSqrs, Dictionary<Square, List<Row>> rowReference, Dictionary<Square, List<Column>> colReference)
         {
-            //Get the square with the most unsloved squares
+            ///*
             Square mostSolvedSquare = Square.GetMostSolved(sudokuSqrs);
-
-            int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);
-            
-            //Use that square to update one element in the square
+            int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);           
             var (updatedSquare, candidateValue, candidateIndex) = Square.CandidateToSquare(mostSolvedSquare);
+            //*/
+
+            //var (updatedSquare, updatedSquareIndex, candidateValue, candidateIndex) = Square.NewCandidateToSquare(rowReference, colReference, sudokuSqrs);
             
             //Update the tried list for square
             updatedSquare.tried.Add(candidateValue);
@@ -309,7 +309,7 @@ namespace SudukoSolver
 
             for (int i = 0; i < totalUnsolved; i++)
             {
-                (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs);
+                (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs, rowReference, colReference);
                 UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
 
                 Console.WriteLine($"Updated Square Position at Index with Value: {updatedSquare.position} : {candidateValue} == {candidateIndex}");
@@ -328,7 +328,7 @@ namespace SudukoSolver
             int candidateValue;
             int updatedSquareIndex;
 
-            (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs);
+            (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs, rowReference, colReference);
             UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
 
             Console.WriteLine($"\n\nUpdated Square Position: {updatedSquare.position}\n" + $"Candidate Value at Index: {candidateValue} @ {candidateIndex}\n");

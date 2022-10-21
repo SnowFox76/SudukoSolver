@@ -203,7 +203,6 @@ namespace SudukoSolver
         }
 
 
-
         //Inserts one candidate into a square
         public static (Square square, int updatedSquareIndex ,int candidateValue, int candidateIndex) NewCandidateToSquare(Dictionary<Square, List<Row>> rowReference, Dictionary<Square, List<Column>> colReference, List<Square> sudokuSqrs)
         {
@@ -296,7 +295,7 @@ namespace SudukoSolver
                     {
                         candidateIndex = 1;
                     }
-                    else
+                    else if (openCol.IndexOf(true) == 2)
                     {
                         candidateIndex = 2;
                     }
@@ -312,12 +311,12 @@ namespace SudukoSolver
                     {
                         candidateIndex = 4;
                     }
-                    else
+                    else if (openCol.IndexOf(true) == 2)
                     {
                         candidateIndex = 5;
                     }
                 }
-                else
+                else if (openRow.IndexOf(true) == 2)
                 {
 
                     if (openCol.IndexOf(true) == 0)
@@ -328,7 +327,7 @@ namespace SudukoSolver
                     {
                         candidateIndex = 7;
                     }
-                    else
+                    else if (openCol.IndexOf(true) == 2)
                     {
                         candidateIndex = 8;
                     }
@@ -351,7 +350,8 @@ namespace SudukoSolver
             }
         }
 
-
+        
+        //Inserts the candidate into the sqaure object
         public static (Square square, int candidateValue, int candidateIndex) CandidateToSquare(Square Square)
         {
             bool newCandidate = false;
