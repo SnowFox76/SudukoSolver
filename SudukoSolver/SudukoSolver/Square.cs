@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -202,54 +205,150 @@ namespace SudukoSolver
 
 
         //Inserts one candidate into a square
-        public static (Square square, int candidateValue, int candidateIndex) NewCandidateToSquare(Square Square, List<Row> Rows, List<Column> Columns)
+        public static (Square square, int updatedSquareIndex ,int candidateValue, int candidateIndex) NewCandidateToSquare(Dictionary<Square, List<Row>> rowReference, Dictionary<Square, List<Column>> colReference, List<Square> sudokuSqrs)
         {
-            bool newCandidate = false;
+            bool validCandidate = false;
             int candidateValue = 0;
             int candidateIndex = 0;
+            int count = 0;
 
-            while (newCandidate == false)
+            Square mostSolvedSquare = GetMostSolved(sudokuSqrs);
+            int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);
+
+            while (validCandidate == false)
             {
                 candidateValue = GetRandomNumber();
+                (candidateIndex, validCandidate) = CheckCandidate(candidateValue, rowReference[mostSolvedSquare], colReference[mostSolvedSquare]);
+                count++;
 
-                if (Square.square.Contains(candidateValue) == true)
+                switch (count == 10)
                 {
-                    continue;
-                }
-                else
-                {
-                    (List<int> tempSquareList, candidateIndex) = SudokuSolver.InsertCadidate(Square.square, candidateValue);
-                    Square.square = tempSquareList;
-                    newCandidate = true;
+                    case true:
+                        break;
+                    default:
+                        continue;   
                 }
             }
-            return (Square, candidateValue, candidateIndex);
+            
+            if (validCandidate == false)
+            {
+                (Square square, candidateValue, candidateIndex) = CandidateToSquare(mostSolvedSquare);
+                return (square, updatedSquareIndex, candidateValue, candidateIndex);
+            }
+            else
+            {
+                List<int> tempSquareList = mostSolvedSquare.square;
+                tempSquareList[candidateIndex] = candidateValue;
+                mostSolvedSquare.square = tempSquareList;
+
+                return (mostSolvedSquare, updatedSquareIndex ,candidateValue, candidateIndex);
+            }                                                                            
         }
 
 
-        //Check the candidate for for clashed in rows and or columns
-        static (int openRow, int openColumn, bool duplicate) CheckCandidate(int candidate, List<Row> Rows, List<Column> Columns)
+        //Recursively check the candidate for for clashed in rows and or columns
+        static (int candidateIndex, bool validCandidate) CheckCandidate(int candidate, List<Row> Rows, List<Column> Columns)
         {
-            bool duplicate = false;
-            dynamic? openRow = null;
-            dynamic? openColumn = null;
+            bool validCandidate = false;
+            int candidateIndex = 0;
+
+            List<bool> openRow = new List<bool>();
+            List<bool> openCol = new List<bool>();
 
             foreach (Row row in Rows)
             {
-                openRow = row.row.Contains(candidate) ? null : row.rowNumber;
+                bool validOption = row.row.Contains(candidate ^ 0) ? false : true;
+                if (validOption)
+                {
+                    bool optionCheck = row.row.Contains(candidate) ? false : true;
+                    openRow.Add(optionCheck);
+                }
+                else
+                {
+                    openRow.Add(validOption);
+                }                                     
             }
             
             foreach (Column column in Columns)
             {
-                openColumn = column.column.Contains(candidate) ? null : column.columnNumber;
+                bool validOption = column.column.Contains(candidate ^ 0) ? false : true;
+                if (validOption)
+                {
+                    bool optionCheck = column.column.Contains(candidate) ? false : true;
+                    openCol.Add(optionCheck);
+                }
+                else
+                {
+                    openCol.Add(validOption);
+                }
             }
 
-            if (openRow != null && openColumn != null)
+            //try to convert the true indexes of the row and column lists to the square index
+            try
             {
-                duplicate = true;
+                if (openRow.IndexOf(true) == 0)
+                {
+                    if (openCol.IndexOf(true) == 0)
+                    {
+                        candidateIndex = 0;
+                    }
+                    else if (openCol.IndexOf(true) == 1)
+                    {
+                        candidateIndex = 1;
+                    }
+                    else
+                    {
+                        candidateIndex = 2;
+                    }
+                }
+                else if (openRow.IndexOf(true) == 1)
+                {
+
+                    if (openCol.IndexOf(true) == 0)
+                    {
+                        candidateIndex = 3;
+                    }
+                    else if (openCol.IndexOf(true) == 1)
+                    {
+                        candidateIndex = 4;
+                    }
+                    else
+                    {
+                        candidateIndex = 5;
+                    }
+                }
+                else
+                {
+
+                    if (openCol.IndexOf(true) == 0)
+                    {
+                        candidateIndex = 6;
+                    }
+                    else if (openCol.IndexOf(true) == 1)
+                    {
+                        candidateIndex = 7;
+                    }
+                    else
+                    {
+                        candidateIndex = 8;
+                    }
+                }
+            } 
+            catch (IndexOutOfRangeException)
+            {
+
             }
             
-            return (openRow, openColumn, duplicate);
+
+            if (openRow.Contains(true) && openCol.Contains(true))
+            {   
+                validCandidate = true;
+                return (candidateIndex , validCandidate);
+            }
+            else
+            {
+                return (candidateIndex, validCandidate);
+            }
         }
 
 

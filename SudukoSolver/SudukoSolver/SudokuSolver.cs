@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,9 +17,9 @@ namespace SudukoSolver
         {
             //Display the menu
             Console.WriteLine("\n\n" +
-                              "=====================\n" +
-                              "    SUDOKU PUZZLE\n" +
-                              "=====================" +
+                              "======================================\n" +
+                              "            SUDOKU PUZZLE\n" +
+                              "======================================" +
                               "\n\n\n" +
                               "  Enter Sudoku Rows:\n\n" +
                               "[ Entries should NOT be seperated    ]\n" +
@@ -40,7 +41,7 @@ namespace SudukoSolver
                     //Cast the user string input to an int and append to the string list
                     try
                     {
-                        string intString = userInput.Split(" ")[n];
+                        string intString = userInput.Split("")[n];
                         stringInput.Add(Convert.ToInt32(intString));
                     }
                     catch (IndexOutOfRangeException)
@@ -183,7 +184,6 @@ namespace SudukoSolver
             updatedSquare.tried.Add(candidateValue);
             updatedSquare.unsolved = MyMiscMethods.GetNumberOfUnsolved(updatedSquare.square);
 
-
             //Return the updated square along with the values and index of the updated element
             return (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex); 
         }
@@ -315,7 +315,7 @@ namespace SudukoSolver
                 Console.WriteLine($"Updated Square Position at Index with Value: {updatedSquare.position} : {candidateValue} == {candidateIndex}");
             }
         }
-
+        
 
         //Testing **
         static void SolveMeRecursive(List<Row> sudokuRows, List<Column> sudokuCols, List<Square> sudokuSqrs)
@@ -327,9 +327,6 @@ namespace SudukoSolver
             int candidateIndex;
             int candidateValue;
             int updatedSquareIndex;
-
-            //var (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs);
-            //UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
 
             (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs);
             UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
