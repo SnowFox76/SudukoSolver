@@ -172,9 +172,9 @@ namespace SudukoSolver
         //Choose the square with the least unsolved numbers, and solve one element of the square
         static (Square updatedSquare ,int CandidateIndex, int CandidateValue, int updatedSquareIndex) SolveSquareElement(List<Square> sudokuSqrs, Dictionary<Square, List<Row>> rowReference, Dictionary<Square, List<Column>> colReference)
         {
-            /*
+            /* 
             Square mostSolvedSquare = Square.GetMostSolved(sudokuSqrs);
-            int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);           
+            int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);
             var (updatedSquare, candidateValue, candidateIndex) = Square.CandidateToSquare(mostSolvedSquare);
             */
 
@@ -312,12 +312,12 @@ namespace SudukoSolver
                 (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs, rowReference, colReference);
                 UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
 
-                Console.WriteLine($"Updated Square Position at Index with Value: {updatedSquare.position} : {candidateValue} == {candidateIndex}");
+                Console.WriteLine($"[]Position : Index == Value | {updatedSquare.position} : {candidateIndex} == {candidateValue}\n");
             }
         }
         
 
-        //Testing **
+        //Testing 
         static void SolveMeRecursive(List<Row> sudokuRows, List<Column> sudokuCols, List<Square> sudokuSqrs)
         {
             Dictionary<Square, List<Row>> rowReference = GetRowReference(sudokuRows, sudokuSqrs);

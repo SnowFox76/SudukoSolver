@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -256,7 +257,8 @@ namespace SudukoSolver
                         return 8;
                     }
                 }
-
+                
+                //It should never get to this point. 
                 return 9;
 
             } catch (IndexOutOfRangeException)
@@ -269,6 +271,43 @@ namespace SudukoSolver
         }
 
 
+        //Get the row and column indexing reference 
+        public static (int rowStartingIndex, int colStartingIndex) GetStartingIndexes(int squareIndex)
+        {
+            int rowStartingIndex;
+            int colStartingIndex;
+
+            if (squareIndex % 3 == 0)
+            {
+                rowStartingIndex = 0;
+            }
+            else if (squareIndex % 3 == 1)
+            {
+                rowStartingIndex = 3;
+            }
+            else
+            {
+                rowStartingIndex = 6;
+            }
+
+            if (squareIndex < 3)
+            {
+                colStartingIndex = 0;
+            }
+            else if (squareIndex > 2 && squareIndex < 6)
+            {
+                colStartingIndex = 3;
+            }
+            else
+            {
+                colStartingIndex = 6;
+            }
+
+            return (rowStartingIndex, colStartingIndex);
+        }
+
+
+
         //Return a valid candidate for ckecking against the rows and columns
         public static int GetValidCandidate(List<int> square)
         {
@@ -279,6 +318,58 @@ namespace SudukoSolver
             } while (square.Contains(candidateValue) == true);
 
             return candidateValue;
+        }
+
+
+        //?Recursively? check the candidate for for clashed in rows and or columns
+        static (int candidateIndex, bool validCandidate) CheckCandidate(int candidate, int squareIndex, List<Row> Rows, List<Column> Columns)
+        {
+            List<bool> openRow = new List<bool>();
+            List<bool> openCol = new List<bool>();
+
+            (int rowStartingIndex, int colStartingIndex) = GetStartingIndexes(squareIndex);
+
+            foreach (Row row in Rows)
+            {
+                bool validOption = row.row.Contains(candidate) ? false : true;
+                if (validOption)
+                {
+                    bool optionCheck = row.row.GetRange(rowStartingIndex, 3).Contains(0) ? true : false;
+                    openRow.Add(optionCheck);
+                }
+                else
+                {
+                    openRow.Add(validOption);
+                }
+            }
+
+            foreach (Column column in Columns)
+            {
+                bool validOption = column.column.Contains(candidate) ? false : true;
+                if (validOption)
+                {
+                    bool optionCheck = column.column.GetRange(colStartingIndex, 3).Contains(0) ? true : false;
+                    openCol.Add(optionCheck);
+                }
+                else
+                {
+                    openCol.Add(validOption);
+                }
+            }
+
+            //Return values based on the boolean values found in the lists
+            if (openRow.Contains(true) && openCol.Contains(true))
+            {
+                bool validCandidate = true;
+                int candidateIndex = GetSquareIndex(openRow, openCol);
+                return (candidateIndex, validCandidate);
+            }
+            else
+            {
+                bool validCandidate = false;
+                int candidateIndex = 0;
+                return (candidateIndex, validCandidate);
+            }
         }
 
 
@@ -306,13 +397,13 @@ namespace SudukoSolver
                 triedCount++;
 
             } while (triedCount < 11); 
-
+            
             if (validCandidate)
             {
                 List<int> tempSquareList = mostSolvedSquare.square;
                 tempSquareList[candidateIndex] = candidateValue;
                 mostSolvedSquare.square = tempSquareList;
-
+                Console.WriteLine($"Valid Candidate == true; Candidate Index: {candidateIndex}  |  Candidate Value: {candidateValue}");
                 return (mostSolvedSquare, mostSolvedSquare.position, candidateValue, candidateIndex);
             }
             else
@@ -321,85 +412,7 @@ namespace SudukoSolver
 
                 return (square, square.position, candidateValue, candidateIndex);
             }            
-        }
-
-
-        //?Recursively? check the candidate for for clashed in rows and or columns
-        static (int candidateIndex, bool validCandidate) CheckCandidate(int candidate, int squareIndex, List<Row> Rows, List<Column> Columns)
-        {            
-            List<bool> openRow = new List<bool>();            
-            List<bool> openCol = new List<bool>();
-            int rowStartingIndex;
-            int colStartingIndex;
-
-            if (squareIndex < 3)
-            {
-                rowStartingIndex = 0;
-            }
-            else if (squareIndex > 2 && squareIndex < 6)
-            {
-                rowStartingIndex = 3;
-            }
-            else
-            {
-                rowStartingIndex = 6;
-            }
-
-            if (squareIndex % 3 == 0)
-            {
-                colStartingIndex = 0;
-            }
-            else if (squareIndex % 3 == 1)
-            {
-                colStartingIndex = 3;
-            }
-            else
-            {
-                colStartingIndex = 6;
-            }
-
-            foreach (Row row in Rows)
-            {
-                bool validOption = row.row.Contains(candidate) ^ row.row.Contains(0) ? true : false;
-                if (validOption)
-                {
-                    bool optionCheck = row.row.GetRange(rowStartingIndex, 3).Contains(0) ? true : false;
-                    openRow.Add(optionCheck);
-                }
-                else
-                {
-                    openRow.Add(validOption);
-                }                                     
-            }
-            
-            foreach (Column column in Columns)
-            {
-                bool validOption = column.column.Contains(candidate) ^ column.column.Contains(0) ? true : false;
-                if (validOption)
-                {
-                    bool optionCheck = column.column.GetRange(colStartingIndex, 3).Contains(0) ? true : false;
-                    openCol.Add(optionCheck);
-                }
-                else
-                {
-                    openCol.Add(validOption);
-                }
-            }
-
-            //Return values based on the boolean values found in the lists
-            if (openRow.Contains(true) && openCol.Contains(true))
-            {   
-                bool validCandidate = true;
-                int candidateIndex = GetSquareIndex(openRow, openCol);
-                return (candidateIndex , validCandidate);
-            }
-            else
-            {
-                bool validCandidate = false;
-                int candidateIndex = 0;
-                return (candidateIndex, validCandidate);
-            }
-        }
+        }        
 
         
         //Inserts the candidate into the sqaure object
