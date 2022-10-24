@@ -172,13 +172,13 @@ namespace SudukoSolver
         //Choose the square with the least unsolved numbers, and solve one element of the square
         static (Square updatedSquare ,int CandidateIndex, int CandidateValue, int updatedSquareIndex) SolveSquareElement(List<Square> sudokuSqrs, Dictionary<Square, List<Row>> rowReference, Dictionary<Square, List<Column>> colReference)
         {
-            ///*
+            /*
             Square mostSolvedSquare = Square.GetMostSolved(sudokuSqrs);
             int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);           
             var (updatedSquare, candidateValue, candidateIndex) = Square.CandidateToSquare(mostSolvedSquare);
-            //*/
+            */
 
-            //var (updatedSquare, updatedSquareIndex, candidateValue, candidateIndex) = Square.NewCandidateToSquare(rowReference, colReference, sudokuSqrs);
+            var (updatedSquare, updatedSquareIndex, candidateValue, candidateIndex) = Square.NewCandidateToSquare(rowReference, colReference, sudokuSqrs);
             
             //Update the tried list for square
             updatedSquare.tried.Add(candidateValue);
