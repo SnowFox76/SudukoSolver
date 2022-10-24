@@ -276,7 +276,9 @@ namespace SudukoSolver
             do
             {
                 candidateValue = GetRandomNumber();
-            } while (square.Contains(candidateValue) = false);
+            } while (square.Contains(candidateValue) == true);
+
+            return candidateValue;
         }
 
 
@@ -288,14 +290,13 @@ namespace SudukoSolver
             int candidateValue = 0;
             int triedCount = 0;
 
-            Square mostSolvedSquare = GetMostSolved(sudokuSqrs);
-            int updatedSquareIndex = sudokuSqrs.IndexOf(mostSolvedSquare);
+            Square mostSolvedSquare = GetMostSolved(sudokuSqrs);            
 
             do
             {
-                candidateValue = GetRandomNumber();
+                candidateValue = GetValidCandidate(mostSolvedSquare.square);
 
-                (candidateIndex, validCandidate) = CheckCandidate(candidateValue, rowReference[mostSolvedSquare], colReference[mostSolvedSquare]);
+                (candidateIndex, validCandidate) = CheckCandidate(candidateValue, mostSolvedSquare.position, rowReference[mostSolvedSquare], colReference[mostSolvedSquare]);
 
                 if (validCandidate)
                 {
@@ -312,29 +313,57 @@ namespace SudukoSolver
                 tempSquareList[candidateIndex] = candidateValue;
                 mostSolvedSquare.square = tempSquareList;
 
-                return (mostSolvedSquare, updatedSquareIndex, candidateValue, candidateIndex);
+                return (mostSolvedSquare, mostSolvedSquare.position, candidateValue, candidateIndex);
             }
             else
             {
                 (Square square, candidateValue, candidateIndex) = CandidateToSquare(mostSolvedSquare);
 
-                return (square, updatedSquareIndex, candidateValue, candidateIndex);
+                return (square, square.position, candidateValue, candidateIndex);
             }            
         }
 
 
         //?Recursively? check the candidate for for clashed in rows and or columns
-        static (int candidateIndex, bool validCandidate) CheckCandidate(int candidate, List<Row> Rows, List<Column> Columns)
+        static (int candidateIndex, bool validCandidate) CheckCandidate(int candidate, int squareIndex, List<Row> Rows, List<Column> Columns)
         {            
-            List<bool> openRow = new List<bool>();
+            List<bool> openRow = new List<bool>();            
             List<bool> openCol = new List<bool>();
+            int rowStartingIndex;
+            int colStartingIndex;
+
+            if (squareIndex < 3)
+            {
+                rowStartingIndex = 0;
+            }
+            else if (squareIndex > 2 && squareIndex < 6)
+            {
+                rowStartingIndex = 3;
+            }
+            else
+            {
+                rowStartingIndex = 6;
+            }
+
+            if (squareIndex % 3 == 0)
+            {
+                colStartingIndex = 0;
+            }
+            else if (squareIndex % 3 == 1)
+            {
+                colStartingIndex = 3;
+            }
+            else
+            {
+                colStartingIndex = 6;
+            }
 
             foreach (Row row in Rows)
             {
                 bool validOption = row.row.Contains(candidate) ^ row.row.Contains(0) ? true : false;
                 if (validOption)
                 {
-                    bool optionCheck = row.row.Contains(candidate) ? false : true;
+                    bool optionCheck = row.row.GetRange(rowStartingIndex, 3).Contains(0) ? true : false;
                     openRow.Add(optionCheck);
                 }
                 else
@@ -348,7 +377,7 @@ namespace SudukoSolver
                 bool validOption = column.column.Contains(candidate) ^ column.column.Contains(0) ? true : false;
                 if (validOption)
                 {
-                    bool optionCheck = column.column.Contains(candidate) ? false : true;
+                    bool optionCheck = column.column.GetRange(colStartingIndex, 3).Contains(0) ? true : false;
                     openCol.Add(optionCheck);
                 }
                 else
