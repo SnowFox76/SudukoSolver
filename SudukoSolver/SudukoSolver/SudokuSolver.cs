@@ -312,7 +312,7 @@ namespace SudukoSolver
                 (updatedSquare, candidateIndex, candidateValue, updatedSquareIndex) = SolveSquareElement(sudokuSqrs, rowReference, colReference);
                 UpdateBoard(rowReference[updatedSquare], colReference[updatedSquare], candidateIndex, candidateValue, updatedSquareIndex);
 
-                Console.WriteLine($"[]Position : Index == Value | {updatedSquare.position} : {candidateIndex} == {candidateValue}\n");
+                Console.WriteLine($"[]Number : Index == Value | {updatedSquare.position} : {candidateIndex} == {candidateValue}\n");
             }
         }
         

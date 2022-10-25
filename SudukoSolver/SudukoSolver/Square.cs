@@ -321,54 +321,47 @@ namespace SudukoSolver
         }
 
 
+
+        //Complete list and jump out from the loop
+        public static List<bool> JumpOut(List<bool> openList)
+        {
+            while (openList.Count < 3)
+            {
+                openList.Add(false);
+            }
+
+            return openList;
+        }
+
+
         //?Recursively? check the candidate for for clashed in rows and or columns
         static (int candidateIndex, bool validCandidate) CheckCandidate(int candidate, int squareIndex, List<Row> Rows, List<Column> Columns)
         {
-            List<bool> openRow = new List<bool>();
-            List<bool> openCol = new List<bool>();
+            List<bool> openRow = new List<bool>(3);
+            List<bool> openCol = new List<bool>(3);            
 
             (int rowStartingIndex, int colStartingIndex) = GetStartingIndexes(squareIndex);
 
             foreach (Row row in Rows)
             {
-                bool validOption = row.row.Contains(candidate) ? false : true;
-                if (validOption)
+                bool validRow = row.row.Contains(candidate) ? false : true;
+                if (validRow)
                 {
-                    bool optionCheck = row.row.GetRange(rowStartingIndex, 3).Contains(0) ? true : false;
-                    openRow.Add(optionCheck);
-                }
-                else
-                {
-                    openRow.Add(validOption);
-                }
-            }
+                    try
+                    {
+                        int validRowCandidate = row.row.GetRange(rowStartingIndex, 3).IndexOf(0);
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        
+                    }
 
-            foreach (Column column in Columns)
-            {
-                bool validOption = column.column.Contains(candidate) ? false : true;
-                if (validOption)
-                {
-                    bool optionCheck = column.column.GetRange(colStartingIndex, 3).Contains(0) ? true : false;
-                    openCol.Add(optionCheck);
+                    bool rowCheck = row.row.GetRange(rowStartingIndex, 3).Contains(0);
+                    if (rowCheck)
+                    {
+                        
+                    }
                 }
-                else
-                {
-                    openCol.Add(validOption);
-                }
-            }
-
-            //Return values based on the boolean values found in the lists
-            if (openRow.Contains(true) && openCol.Contains(true))
-            {
-                bool validCandidate = true;
-                int candidateIndex = GetSquareIndex(openRow, openCol);
-                return (candidateIndex, validCandidate);
-            }
-            else
-            {
-                bool validCandidate = false;
-                int candidateIndex = 0;
-                return (candidateIndex, validCandidate);
             }
         }
 
@@ -376,9 +369,9 @@ namespace SudukoSolver
         //Inserts one candidate into a square
         public static (Square square, int updatedSquareIndex ,int candidateValue, int candidateIndex) NewCandidateToSquare(Dictionary<Square, List<Row>> rowReference, Dictionary<Square, List<Column>> colReference, List<Square> sudokuSqrs)
         {
-            bool validCandidate = false;
-            int candidateIndex = 0;            
-            int candidateValue = 0;
+            bool validCandidate;
+            int candidateIndex;            
+            int candidateValue;
             int triedCount = 0;
 
             Square mostSolvedSquare = GetMostSolved(sudokuSqrs);            
@@ -403,7 +396,7 @@ namespace SudukoSolver
                 List<int> tempSquareList = mostSolvedSquare.square;
                 tempSquareList[candidateIndex] = candidateValue;
                 mostSolvedSquare.square = tempSquareList;
-                Console.WriteLine($"Valid Candidate == true; Candidate Index: {candidateIndex}  |  Candidate Value: {candidateValue}");
+                
                 return (mostSolvedSquare, mostSolvedSquare.position, candidateValue, candidateIndex);
             }
             else
