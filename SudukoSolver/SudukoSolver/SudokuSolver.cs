@@ -294,7 +294,7 @@ namespace SudukoSolver
 
 
 
-        //Solve every missing value
+        //Solve every unsolved element
         static void SolveMe(List<Row> sudokuRows, List<Column> sudokuCols, List<Square> sudokuSqrs)
         {
             Dictionary<Square, List<Row>> rowReference = GetRowReference(sudokuRows, sudokuSqrs);
