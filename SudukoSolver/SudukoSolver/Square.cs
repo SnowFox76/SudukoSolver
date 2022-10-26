@@ -214,15 +214,15 @@ namespace SudukoSolver
                 {
                     if (openCol.IndexOf(true) == 0)
                     {
-                        return 0;
+                        return 2;
                     }
                     else if (openCol.IndexOf(true) == 1)
                     {
-                        return 1;
+                        return 0;
                     }
                     else if (openCol.IndexOf(true) == 2)
                     {
-                        return 2;
+                        return 1;
                     }
                 }
                 else if (openRow.IndexOf(true) == 1)
@@ -230,15 +230,15 @@ namespace SudukoSolver
 
                     if (openCol.IndexOf(true) == 0)
                     {
-                        return 3;
+                        return 5;
                     }
                     else if (openCol.IndexOf(true) == 1)
                     {
-                        return 4;
+                        return 3;
                     }
                     else if (openCol.IndexOf(true) == 2)
                     {
-                        return 5;
+                        return 4;
                     }
                 }
                 else if (openRow.IndexOf(true) == 2)
@@ -246,28 +246,25 @@ namespace SudukoSolver
 
                     if (openCol.IndexOf(true) == 0)
                     {
-                        return 6;
+                        return 8;
                     }
                     else if (openCol.IndexOf(true) == 1)
                     {
-                        return 7;
+                        return 6;
                     }
                     else if (openCol.IndexOf(true) == 2)
                     {
-                        return 8;
+                        return 7;
                     }
                 }
                 
                 //It should never get to this point. 
-                return 9;
+                return 12;
 
             } catch (IndexOutOfRangeException)
             {
-                return 9;
-            }
-            
-
-                              
+                return 12;
+            }                                          
         }
 
 
@@ -307,7 +304,6 @@ namespace SudukoSolver
         }
 
 
-
         //Return a valid candidate for ckecking against the rows and columns
         public static int GetValidCandidate(List<int> square)
         {
@@ -321,7 +317,6 @@ namespace SudukoSolver
         }
 
 
-
         //Complete list and jump out from the loop
         public static List<bool> JumpOut(List<bool> openList)
         {
@@ -332,36 +327,86 @@ namespace SudukoSolver
 
             return openList;
         }
-
+        
 
         //?Recursively? check the candidate for for clashed in rows and or columns
         static (int candidateIndex, bool validCandidate) CheckCandidate(int candidate, int squareIndex, List<Row> Rows, List<Column> Columns)
         {
             List<bool> openRow = new List<bool>(3);
-            List<bool> openCol = new List<bool>(3);            
+            List<bool> openCol = new List<bool>(3);
+            List<int> colSteps = new List<int> { 1, 0, 2 };
 
             (int rowStartingIndex, int colStartingIndex) = GetStartingIndexes(squareIndex);
 
+            
             foreach (Row row in Rows)
             {
-                bool validRow = row.row.Contains(candidate) ? false : true;
-                if (validRow)
+                bool validOption = row.row.Contains(candidate) ? false : true;
+                if (validOption)
                 {
-                    try
+                    bool optionCheck = row.row.GetRange(rowStartingIndex, 3).Contains(0) ? true : false;
+                    if (optionCheck)
                     {
-                        int validRowCandidate = row.row.GetRange(rowStartingIndex, 3).IndexOf(0);
+                        openRow.Add(optionCheck);
+                        openRow = JumpOut(openRow);
+                        Console.WriteLine($"openRow.Count = {openRow.Count}");      // Looping...??
+                        goto theColumnChecker;
                     }
-                    catch (IndexOutOfRangeException)
+                    else
                     {
-                        
-                    }
-
-                    bool rowCheck = row.row.GetRange(rowStartingIndex, 3).Contains(0);
-                    if (rowCheck)
-                    {
-                        
+                        openRow.Add(optionCheck);
                     }
                 }
+                else
+                {
+                    openRow.Add(validOption);
+                }
+            }
+
+
+
+            theColumnChecker:            
+
+            foreach (int step in colSteps)
+            {
+                bool validOption = Columns[step].column.Contains(candidate) ? false : true;
+                if (validOption)
+                {
+                    bool optionCheck = Columns[step].column.GetRange(colStartingIndex, 3).Contains(0) ? true : false;
+                    if (optionCheck)
+                    {
+                        openCol.Add(optionCheck);
+                        openCol = JumpOut(openCol);
+                        Console.WriteLine($"openCol.Count = {openCol.Count}");///////----------------->
+                        goto returnOfValues;
+                    }
+                    else
+                    {
+                        openCol.Add(optionCheck);
+                    }
+                }
+                else
+                {
+                    openCol.Add(validOption);
+                }
+            }
+
+
+
+            //Return values based on the boolean values found in the lists
+            returnOfValues:            
+
+            if (openRow.Contains(true) && openCol.Contains(true))
+            {
+                bool validCandidate = true;
+                int candidateIndex = GetSquareIndex(openRow, openCol);
+                return (candidateIndex, validCandidate);
+            }
+            else
+            {
+                bool validCandidate = false;
+                int candidateIndex = 0;
+                return (candidateIndex, validCandidate);
             }
         }
 
@@ -372,8 +417,8 @@ namespace SudukoSolver
             bool validCandidate;
             int candidateIndex;            
             int candidateValue;
-            int triedCount = 0;
-
+            int triedCount = 0;            
+            
             Square mostSolvedSquare = GetMostSolved(sudokuSqrs);            
 
             do
